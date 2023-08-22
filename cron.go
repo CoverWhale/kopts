@@ -12,6 +12,7 @@ const (
 	Hourly         CronSchedule = "0 * * * *"
 	Minute         CronSchedule = "* * * * *"
 	Weekly         CronSchedule = "0 0 1 * *"
+	Monthly        CronSchedule = "0 0 1 1/1 *"
 	Yearly         CronSchedule = "0 0 1 1 *"
 	Every15Minutes CronSchedule = "*/15 * * * *"
 	Every5Minutes  CronSchedule = "*/5 * * * *"
