@@ -1,7 +1,10 @@
 package kopts
 
 import (
+	"fmt"
+
 	batchv1 "k8s.io/api/batch/v1"
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -31,16 +34,12 @@ func NewCronJob(name string, opts ...CronJobOpt) *CronJob {
 		CronJob: batchv1.CronJob{
 			TypeMeta: metav1.TypeMeta{
 				Kind:       "CronJob",
-				APIVersion: "v1",
+				APIVersion: "batch/v1",
 			},
 			ObjectMeta: newObjectMeta(name),
 			Spec: batchv1.CronJobSpec{
 				JobTemplate: batchv1.JobTemplateSpec{
-					Spec: batchv1.JobSpec{
-						Selector: &metav1.LabelSelector{
-							MatchLabels: make(map[string]string),
-						},
-					},
+					Spec: batchv1.JobSpec{},
 				},
 			},
 		},
@@ -56,6 +55,12 @@ func NewCronJob(name string, opts ...CronJobOpt) *CronJob {
 func CronJobNamespace(n string) CronJobOpt {
 	return func(c *CronJob) {
 		setNamespace(n, &c.ObjectMeta)
+	}
+}
+
+func CronJobRestartPolicy(r corev1.RestartPolicy) CronJobOpt {
+	return func(c *CronJob) {
+		c.Spec.JobTemplate.Spec.Template.Spec.RestartPolicy = r
 	}
 }
 
@@ -87,12 +92,6 @@ func CronJobBackoffLimit(i int) CronJobOpt {
 	}
 }
 
-func CronJobSelector(key, value string) CronJobOpt {
-	return func(c *CronJob) {
-		c.Spec.JobTemplate.Spec.Selector.MatchLabels[key] = value
-	}
-}
-
 func CronJobPodSpec(p PodSpec) CronJobOpt {
 	return func(c *CronJob) {
 		c.Spec.JobTemplate.Spec.Template = p.Spec
@@ -101,7 +100,7 @@ func CronJobPodSpec(p PodSpec) CronJobOpt {
 
 func CronJobSchedule(cs CronSchedule) CronJobOpt {
 	return func(c *CronJob) {
-		c.Spec.Schedule = string(cs)
+		c.Spec.Schedule = fmt.Sprintf("%s", string(cs))
 	}
 }
 
