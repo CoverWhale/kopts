@@ -71,3 +71,15 @@ func PodInitContainer(c Container) PodOpt {
 		p.Spec.Spec.InitContainers = append(p.Spec.Spec.InitContainers, c.Container)
 	}
 }
+
+// Add a configmap to the volumes
+func PodConfigmapAsVolume(name string, c ConfigMap) PodOpt {
+	volume := corev1.Volume{
+		Name:         name,
+		VolumeSource: c.AsVolumeSource(),
+	}
+
+	return func(p *PodSpec) {
+		p.Spec.Spec.Volumes = append(p.Spec.Spec.Volumes, volume)
+	}
+}
