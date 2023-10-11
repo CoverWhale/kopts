@@ -133,6 +133,17 @@ func ContainerVolume(path string, pv PersistentVolume) ContainerOpt {
 	}
 }
 
+// Mount a volume source in the container
+func ContainerVolumeSource(name, mountPath string, vs corev1.VolumeSource) ContainerOpt {
+	return func(c *Container) {
+		c.VolumeMounts = append(c.VolumeMounts, corev1.VolumeMount{
+			Name:      name,
+			MountPath: mountPath,
+		})
+
+	}
+}
+
 // Liveness probe holds the information for a Kubernetes liveness probe
 type HTTPProbe struct {
 	Path          string

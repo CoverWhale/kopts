@@ -91,3 +91,14 @@ func ConfigMapBinaryDataMap(data map[string][]byte) ConfigMapOpt {
 		}
 	}
 }
+
+// Returns the ConfigMap as a volume source
+func (c *ConfigMap) AsVolumeSource() corev1.VolumeSource {
+	return corev1.VolumeSource{
+		ConfigMap: &corev1.ConfigMapVolumeSource{
+			LocalObjectReference: corev1.LocalObjectReference{
+				Name: c.Name,
+			},
+		},
+	}
+}
