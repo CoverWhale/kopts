@@ -101,3 +101,27 @@ func DeploymentReplicas(r int) DeploymentOpt {
 		d.Spec.Replicas = &replicas
 	}
 }
+
+func DeploymentNodeSelector(selectors map[string]string) DeploymentOpt {
+	return func(d *Deployment) {
+		d.Spec.Template.Spec.NodeSelector = selectors
+	}
+}
+
+// Set tolerations
+func DeploymentTolerations(tolerations []Toleration) DeploymentOpt {
+	var coreTolerations []corev1.Toleration
+	for _, v := range tolerations {
+		seconds := int64(v.TolerationSeconds)
+		coreTolerations = append(coreTolerations, corev1.Toleration{
+			Key:               v.Key,
+			Value:             v.Value,
+			TolerationSeconds: &seconds,
+			Operator:          v.Operator,
+			Effect:            v.Effect,
+		})
+	}
+	return func(d *Deployment) {
+		d.Spec.Template.Spec.Tolerations = coreTolerations
+	}
+}

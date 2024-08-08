@@ -78,11 +78,21 @@ config
 		kopts.PodConfigmapAsVolume(conf.Name, conf),
 	)
 
+	t := kopts.Toleration{
+		Key:               "foo",
+		Value:             "bar",
+		TolerationSeconds: 30,
+		Operator:          "equals",
+		Effect:            "NoSchedule",
+	}
+
 	d := kopts.NewDeployment("testing",
 		kopts.DeploymentNamespace(namespace),
 		kopts.DeploymentSelector("app", "testing"),
 		kopts.DeploymentPodSpec(p),
 		kopts.DeploymentReplicas(3),
+		kopts.DeploymentTolerations([]kopts.Toleration{t}),
+		kopts.DeploymentNodeSelector(map[string]string{"foo": "bar"}),
 	)
 
 	x := kopts.DeploymentReplicas(1)
